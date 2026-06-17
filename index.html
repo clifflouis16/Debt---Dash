@@ -4,25 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Debt Dash - Your Path to Financial Freedom</title>
-  
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- React & ReactDOM -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  
+
+  <!-- React & ReactDOM (pinned to a fixed version for stability) -->
+  <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+
   <!-- Babel Standalone for JSX -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  
+
+  <!-- Lucide Icons (PINNED version - do NOT change back to @latest) -->
+  <!-- Debt Dash v2.2 (fixed build) - paste this whole file into index.html -->
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+
   <style>
     .animate-in {
       animation: slideIn 0.3s ease-out;
     }
-    
+
     @keyframes slideIn {
       from {
         transform: translateY(-100%);
@@ -33,16 +34,16 @@
         opacity: 1;
       }
     }
-    
+
     .slide-in-from-top {
       animation-name: slideIn;
     }
-    
+
     /* Safe area padding for mobile devices */
     .pb-safe {
       padding-bottom: env(safe-area-inset-bottom);
     }
-    
+
     /* Smooth scrolling */
     html {
       scroll-behavior: smooth;
@@ -54,7 +55,18 @@
 
   <script type="text/babel">
     const { useState, useEffect, useMemo, useCallback, memo } = React;
-    const { Plus, TrendingDown, Wallet, ChevronDown, ChevronUp, Download, Upload, DollarSign, AlertCircle, Target, Zap, History, Calculator, BarChart3, Flame, X, Edit2 } = lucide;
+
+    // Safe icon renderer - never crashes the app if the icon library
+    // fails to load or changes. Worst case: icons just don't draw.
+    const renderIcons = () => {
+      try {
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+          window.lucide.createIcons();
+        }
+      } catch (e) {
+        console.error('Icon render skipped:', e);
+      }
+    };
 
     // ============================================================================
     // UTILITY FUNCTIONS - EXACT FINANCIAL CALCULATIONS
@@ -201,7 +213,7 @@
 
     const Icon = ({ name, size = 24, className = "" }) => {
       useEffect(() => {
-        lucide.createIcons();
+        renderIcons();
       }, []);
       
       return React.createElement('i', {
@@ -1145,9 +1157,9 @@
       const [notification, setNotification] = useState(null);
       const [newCard, setNewCard] = useState({ name: '', balance: '', creditLimit: '', apr: '', issuer: 'chase', dueDate: '', closeDate: '' });
 
-      // Initialize Lucide icons
+      // Initialize icons safely (won't crash if the icon library fails to load)
       useEffect(() => {
-        lucide.createIcons();
+        renderIcons();
       }, [showQuickEdit, showFundsManager, showMakePayment, showCalculator, showInsights, showHistory, showExportModal, showImportModal, isAdding, expandedCard, cards.length]);
 
       const showNotification = useCallback((message, type = 'success') => {
